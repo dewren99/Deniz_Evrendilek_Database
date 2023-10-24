@@ -4,10 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.deniz_evrendilek_database.data.converters.ArrayListLatLngConverter
+import com.example.deniz_evrendilek_database.data.converters.CalendarConverter
 import com.example.deniz_evrendilek_database.data.dao.ExerciseEntryDao
 import com.example.deniz_evrendilek_database.data.model.ExerciseEntry
 
-@Database(entities = [ExerciseEntry::class], version = 1)
+@Database(entities = [ExerciseEntry::class], version = 1, exportSchema = false)
+@TypeConverters(CalendarConverter::class, ArrayListLatLngConverter::class)
 abstract class MainDatabase : RoomDatabase() {
     abstract val exerciseEntryDao: ExerciseEntryDao
 
