@@ -12,6 +12,7 @@ import com.example.deniz_evrendilek_database.data.repository.ExerciseEntryReposi
 import com.example.deniz_evrendilek_database.ui.viewmodel.StartFragmentViewModel
 import com.example.deniz_evrendilek_database.utils.DateTimeUtils
 
+// TODO: Handle Metric Preference
 class MainActivity : AppCompatActivity() {
     private lateinit var database: MainDatabase
     private lateinit var repository: ExerciseEntryRepository
