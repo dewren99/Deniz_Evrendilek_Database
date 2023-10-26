@@ -3,9 +3,9 @@ package com.example.deniz_evrendilek_database.ui.fragments.dialogs
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
+import com.example.deniz_evrendilek_database.utils.DateTimeUtils
 
 interface TimeListener {
     fun onTimeSelected(hourOfDay: Int, minute: Int)
@@ -21,7 +21,7 @@ class TimePickerDialogFragment(private val _hour: Int, private val _minute: Int)
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return TimePickerDialog(
-            requireContext(), this, _hour, _minute, DateFormat.is24HourFormat(requireContext())
+            requireContext(), this, _hour, _minute, DateTimeUtils.is24HourFormat
         )
     }
 

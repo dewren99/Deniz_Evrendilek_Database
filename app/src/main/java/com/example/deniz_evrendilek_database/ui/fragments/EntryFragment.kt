@@ -11,14 +11,21 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.deniz_evrendilek_database.R
+import com.example.deniz_evrendilek_database.constants.ExerciseTypes
+import com.example.deniz_evrendilek_database.constants.InputTypes
 import com.example.deniz_evrendilek_database.data.ExerciseDataState
+import com.example.deniz_evrendilek_database.data.model.ExerciseEntry
 import com.example.deniz_evrendilek_database.ui.fragments.dialogs.AlertDialogFragment
 import com.example.deniz_evrendilek_database.ui.fragments.dialogs.DateListener
 import com.example.deniz_evrendilek_database.ui.fragments.dialogs.DatePickerDialogFragment
 import com.example.deniz_evrendilek_database.ui.fragments.dialogs.TimeListener
 import com.example.deniz_evrendilek_database.ui.fragments.dialogs.TimePickerDialogFragment
+import com.example.deniz_evrendilek_database.ui.viewmodel.ExerciseEntryViewModel
+import com.example.deniz_evrendilek_database.ui.viewmodel.ExerciseEntryViewModelFactory
+import com.example.deniz_evrendilek_database.ui.viewmodel.StartFragmentViewModel
 
 val ENTRY_OPTIONS = arrayOf(
     "Date", "Time", "Duration", "Distance", "Calories", "Heart Rate", "Comment"
@@ -32,8 +39,14 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
     private lateinit var listView: ListView
     private lateinit var buttonSave: Button
     private lateinit var buttonCancel: Button
+    private lateinit var startFragmentViewModel: StartFragmentViewModel
+    private lateinit var exerciseEntryViewModelFactory: ExerciseEntryViewModelFactory
+    private lateinit var exerciseEntryViewModel: ExerciseEntryViewModel
 
     private var exerciseDataState = ExerciseDataState()
+
+    private var exerciseType: String? = null
+    private var inputType: String? = null
 
 
     override fun onCreateView(
@@ -43,6 +56,22 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
         println("onCreateView")
         view = inflater.inflate(R.layout.fragment_entry, container, false)
         setupListView()
+
+        exerciseEntryViewModelFactory = ExerciseEntryViewModelFactory(requireActivity())
+        exerciseEntryViewModel = ViewModelProvider(
+            requireActivity(),
+            exerciseEntryViewModelFactory
+        )[ExerciseEntryViewModel::class.java]
+
+
+        startFragmentViewModel =
+            ViewModelProvider(requireActivity())[StartFragmentViewModel::class.java]
+
+        startFragmentViewModel.inputAndActivityType.observe(viewLifecycleOwner) {
+            println("Pair: $it")
+            inputType = it.first
+            exerciseType = it.second
+        }
         return view
     }
 
@@ -74,6 +103,32 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
         exerciseDataState = restoredData
     }
 
+    private fun onSave() {
+        if (inputType == null || exerciseType == null) {
+            throw IllegalStateException("inputType or exerciseType  is null after navigation")
+        }
+        val inputTypeId = InputTypes.getId(inputType!!)
+        val exerciseTypeId = ExerciseTypes.getId(exerciseType!!)
+        if (inputTypeId == null || exerciseTypeId == null) {
+            throw IllegalStateException("inputType id or exerciseType id is null after navigation")
+        }
+        val entry = ExerciseEntry(
+            inputType = inputTypeId,
+            activityType = exerciseTypeId,
+            dateTime = exerciseDataState.getCalendar(),
+            duration = exerciseDataState.duration.toDouble(), // TODO: change these to Double
+            distance = exerciseDataState.distance.toDouble(),
+            avgPace = 0.0, // TODO
+            avgSpeed = 0.0, // TODO
+            calorie = exerciseDataState.calories.toDouble(),
+            climb = 0.0, // TODO
+            heartRate = exerciseDataState.heartRate.toDouble(),
+            comment = exerciseDataState.comment,
+            locationList = arrayListOf(), // TODO
+        )
+        exerciseEntryViewModel.insert(entry)
+    }
+
     private fun handleOnItemClickListener(selected: String) {
         when (selected) {
             ENTRY_OPTIONS[0] -> createAndShowDatePicker()
@@ -102,6 +157,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
         buttonSave = view.findViewById(R.id.manual_entry_save_button)
         buttonCancel = view.findViewById(R.id.manual_entry_cancel_button)
         buttonSave.setOnClickListener {
+            onSave()
             findNavController().navigate(R.id.action_entryFragment_to_mainFragment)
         }
         buttonCancel.setOnClickListener {

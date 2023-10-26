@@ -10,19 +10,29 @@ import kotlinx.coroutines.launch
 class ExerciseEntryRepository(
     private val exerciseEntryDao: ExerciseEntryDao
 ) {
-    val allExerciseEntries: Flow<List<ExerciseEntry>> = exerciseEntryDao.getAll()
+    private val _allExerciseEntries: Flow<List<ExerciseEntry>> = exerciseEntryDao.getAll()
 
-    suspend fun insert(exerciseEntry: ExerciseEntry) {
-        CoroutineScope(IO).launch { exerciseEntryDao.insert(exerciseEntry) }
+    fun getAll(): Flow<List<ExerciseEntry>> {
+        return _allExerciseEntries
+    }
+
+    fun insert(exerciseEntry: ExerciseEntry) {
+        CoroutineScope(IO).launch {
+            exerciseEntryDao.insert(exerciseEntry)
+        }
     }
 
     // TODO: add delete(id)
-    suspend fun delete(exerciseEntry: ExerciseEntry) {
-        CoroutineScope(IO).launch { exerciseEntryDao.delete(exerciseEntry) }
+    fun delete(exerciseEntry: ExerciseEntry) {
+        CoroutineScope(IO).launch {
+            exerciseEntryDao.delete(exerciseEntry)
+        }
     }
 
-    suspend fun deleteAll() {
-        CoroutineScope(IO).launch { exerciseEntryDao.deleteAll() }
+    fun deleteAll() {
+        CoroutineScope(IO).launch {
+            exerciseEntryDao.deleteAll()
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.deniz_evrendilek_database.data
 
 import android.icu.util.Calendar
+import com.example.deniz_evrendilek_database.utils.DateTimeUtils
 
 class ExerciseDataState(
     var day: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
@@ -8,11 +9,11 @@ class ExerciseDataState(
     var year: Int = Calendar.getInstance().get(Calendar.YEAR),
     var hour: Int = Calendar.getInstance().get(Calendar.HOUR),
     var minute: Int = Calendar.getInstance().get(Calendar.MINUTE),
-    private var duration: Int = 0,
-    private var distance: Int = 0,
-    private var calories: Int = 0,
-    private var heartRate: Int = 0,
-    private var comment: String = ""
+    var duration: Int = 0,
+    var distance: Int = 0,
+    var calories: Int = 0,
+    var heartRate: Int = 0,
+    var comment: String = ""
 ) {
     fun saveInstanceState(
         putString: (String, String?) -> Unit, putInt: (String, Int) -> Unit
@@ -60,5 +61,21 @@ class ExerciseDataState(
 
     override fun toString(): String {
         return super.toString() + " | $day, $month, $year, $hour, $minute"
+    }
+
+    fun getCalendar(): Calendar {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, day)
+            set(Calendar.MONTH, month)
+            set(Calendar.YEAR, year)
+            // hour
+            set(Calendar.MINUTE, minute)
+        }
+        if (DateTimeUtils.is24HourFormat) {
+            calendar.set(Calendar.HOUR_OF_DAY, hour)
+        } else {
+            calendar.set(Calendar.HOUR, hour)
+        }
+        return calendar
     }
 }

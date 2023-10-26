@@ -9,16 +9,21 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.deniz_evrendilek_database.R
+import com.example.deniz_evrendilek_database.ui.viewmodel.StartFragmentViewModel
 
 
 class StartFragment : Fragment() {
     private lateinit var spinnerInputType: Spinner
     private lateinit var spinnerActivityType: Spinner
     private lateinit var buttonStart: Button
+    private lateinit var startFragmentViewModel: StartFragmentViewModel
+    private lateinit var inputTypes: Array<String>
+    private lateinit var activityTypes: Array<String>
+    private lateinit var view: View
 
-    private var selectedInputType: String? = null
 
     @Suppress("RedundantOverride")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,26 +34,68 @@ class StartFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_start, container, false)
-        setupViews(view)
+        view = inflater.inflate(R.layout.fragment_start, container, false)
+        setupLateInits()
+        setupAdapters()
+        setupListeners()
+        setupViewModel()
+
         return view
     }
 
-    private fun setupViews(view: View) {
+    private fun setupViewModel() {
+        startFragmentViewModel =
+            ViewModelProvider(requireActivity())[StartFragmentViewModel::class.java]
+
+        startFragmentViewModel.inputType.observe(viewLifecycleOwner) { inputType ->
+            if (inputType == null) {
+                throw NoSuchFieldException("Input Type cannot be empty")
+            }
+            println("inputType: $inputType")
+            buttonStart.setOnClickListener {
+                when (inputType) {
+                    inputTypes[0] -> navigateToEntryCreation()
+                    inputTypes[1] -> navigateToMap()
+                    inputTypes[2] -> navigateToMap()
+                    else -> throw IllegalStateException("Unexpected input type navigation: $inputType")
+                }
+            }
+        }
+    }
+
+    private fun setupLateInits() {
         spinnerInputType = view.findViewById(R.id.spinner_input_type)
         spinnerActivityType = view.findViewById(R.id.spinner_activity_type)
         buttonStart = view.findViewById(R.id.start)
+        inputTypes = resources.getStringArray(R.array.InputType)
+        activityTypes = resources.getStringArray(R.array.ActivityType)
+    }
 
-        val inputTypeOptions = resources.getStringArray(R.array.InputType)
-        val activityTypeOptions = resources.getStringArray(R.array.ActivityType)
-
-        // Setup Adapters
+    private fun setupAdapters() {
         spinnerInputType.adapter = ArrayAdapter(
-            view.context, android.R.layout.simple_spinner_dropdown_item, inputTypeOptions
+            view.context, android.R.layout.simple_spinner_dropdown_item, inputTypes
         )
         spinnerActivityType.adapter = ArrayAdapter(
-            view.context, android.R.layout.simple_spinner_dropdown_item, activityTypeOptions
+            view.context, android.R.layout.simple_spinner_dropdown_item, activityTypes
         )
+    }
+
+    private fun setupListeners() {
+        spinnerActivityType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?, view: View?, position: Int, id: Long
+            ) {
+                if (parent == null) {
+                    throw IllegalAccessError("No parent found")
+                }
+                val selected = parent.getItemAtPosition(position).toString()
+                startFragmentViewModel.setActivityType(selected)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+        }
 
         spinnerInputType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -57,8 +104,8 @@ class StartFragment : Fragment() {
                 if (parent == null) {
                     throw IllegalAccessError("No parent found")
                 }
-                selectedInputType = parent.getItemAtPosition(position).toString()
-                println(selectedInputType)
+                val selected = parent.getItemAtPosition(position).toString()
+                startFragmentViewModel.setInputType(selected)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -66,16 +113,14 @@ class StartFragment : Fragment() {
             }
 
         }
-
-        buttonStart.setOnClickListener {
-            when (selectedInputType) {
-                inputTypeOptions[0] -> navigateToEntryCreation()
-                inputTypeOptions[1] -> navigateToMap()
-                inputTypeOptions[2] -> navigateToMap()
-                else -> throw IllegalStateException("Unexpected input type navigation")
-            }
-        }
     }
+
+//    private fun bundleForNavigation(inputType: String, activityType: String): Bundle {
+//        val bundle = Bundle()
+//        bundle.putString(EXERCISE_ENTRY_ACTIVITY_TYPE_KEY, activityType)
+//        bundle.putString(EXERCISE_ENTRY_INPUT_TYPE_KEY, inputType)
+//        return bundle
+//    }
 
     private fun navigateToMap() {
         findNavController().navigate(R.id.action_mainFragment_to_mapFragment)
