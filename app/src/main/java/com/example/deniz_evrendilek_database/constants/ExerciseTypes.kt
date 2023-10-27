@@ -9,7 +9,7 @@ object ExerciseTypes {
     fun init(context: Context) {
         _types = context.resources.getStringArray(R.array.ActivityType)
         val temp = mutableMapOf<String, Int>()
-        var i = 1
+        var i = 0
         _types.forEach {
             temp[it] = i
             i++

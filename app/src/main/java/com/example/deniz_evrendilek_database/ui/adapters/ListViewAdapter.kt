@@ -44,10 +44,4 @@ class ListViewAdapter(
         println("getView position: $position")
         return view
     }
-
-    fun update(list: Array<ExerciseEntry>) {
-        println("update ListView with size: ${list.size}")
-        exerciseEntryList = list
-        notifyDataSetChanged()
-    }
 }

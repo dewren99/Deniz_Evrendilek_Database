@@ -105,6 +105,7 @@ class StartFragment : Fragment() {
                     throw IllegalAccessError("No parent found")
                 }
                 val selected = parent.getItemAtPosition(position).toString()
+                println("Selected Input Type: $selected")
                 startFragmentViewModel.setInputType(selected)
             }
 
