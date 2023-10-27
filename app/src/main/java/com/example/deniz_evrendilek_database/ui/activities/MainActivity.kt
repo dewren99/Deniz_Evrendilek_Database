@@ -23,7 +23,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initGlobal()
-        initDB()
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         toolbar.title = resources.getString(R.string.myruns)
@@ -36,12 +35,5 @@ class MainActivity : AppCompatActivity() {
         DateTimeUtils.init(this)
         startFragmentViewModel =
             ViewModelProvider(this)[StartFragmentViewModel::class.java]
-    }
-
-    private fun initDB() {
-//        database = MainDatabase.getInstance(this)
-//        repository = ExerciseEntryRepository(database.exerciseEntryDao)
-//        ExerciseEntryViewModel(repository)
-//        ExerciseEntryViewModel(this)
     }
 }

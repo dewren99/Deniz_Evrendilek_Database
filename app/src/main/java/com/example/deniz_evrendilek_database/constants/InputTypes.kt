@@ -18,6 +18,6 @@ object InputTypes {
     }
 
     fun getAll() = _types
-    fun getAt(index: Int) = _types[index]
+    fun getString(index: Int) = _types[index]
     fun getId(type: String) = _typesWithIntIds[type]
 }
