@@ -18,7 +18,7 @@ class AlertDialogFragment(
     private val placeHolder: String?,
     private val positiveButtonText: String?,
     private val negativeButtonText: String?,
-    private val positiveButtonCallback: ((DialogInterface, Int) -> Unit)?,
+    private val positiveButtonCallback: ((DialogInterface, Int, String) -> Unit)?,
     private val negativeButtonCallback: ((DialogInterface, Int) -> Unit)?,
     private val listItems: Array<String>?,
 ) : DialogFragment() {
@@ -72,7 +72,7 @@ class AlertDialogFragment(
     private fun setButtons(builder: Builder, input: EditText) {
         if (positiveButtonCallback != null && positiveButtonText != null) {
             builder.setPositiveButton(positiveButtonText) { dialog, i ->
-                positiveButtonCallback.invoke(dialog, i)
+                positiveButtonCallback.invoke(dialog, i, input.text.toString())
                 println(input.text.toString())
             }
         }

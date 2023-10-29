@@ -16,8 +16,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.deniz_evrendilek_database.R
 import com.example.deniz_evrendilek_database.constants.ExerciseTypes
 import com.example.deniz_evrendilek_database.constants.InputTypes
-import com.example.deniz_evrendilek_database.data.model.ManualExerciseEntryForm
 import com.example.deniz_evrendilek_database.data.model.ExerciseEntry
+import com.example.deniz_evrendilek_database.data.model.ManualExerciseEntryForm
 import com.example.deniz_evrendilek_database.ui.fragments.dialogs.AlertDialogFragment
 import com.example.deniz_evrendilek_database.ui.fragments.dialogs.DateListener
 import com.example.deniz_evrendilek_database.ui.fragments.dialogs.DatePickerDialogFragment
@@ -59,8 +59,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
 
         exerciseEntryViewModelFactory = ExerciseEntryViewModelFactory(requireActivity())
         exerciseEntryViewModel = ViewModelProvider(
-            requireActivity(),
-            exerciseEntryViewModelFactory
+            requireActivity(), exerciseEntryViewModelFactory
         )[ExerciseEntryViewModel::class.java]
 
 
@@ -79,11 +78,14 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
         println("onSaveInstanceState")
         super.onSaveInstanceState(outState)
 
-        manualExerciseEntryForm.saveInstanceState(
-            { key: String, value: String? -> outState.putString(key, value) },
+        manualExerciseEntryForm.saveInstanceState({ key: String, value: String? ->
+            outState.putString(
+                key,
+                value
+            )
+        },
             { key: String, value: Int -> outState.putInt(key, value) },
-            { key: String, value: Double -> outState.putDouble(key, value) }
-        )
+            { key: String, value: Double -> outState.putDouble(key, value) })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -94,19 +96,13 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
         }
 
         val restoredData =
-            manualExerciseEntryForm.restoreSavedInstanceState(
-                { key: String, defaultValue: String ->
-                    savedInstanceState.getString(key, defaultValue)
-                },
-                { key: String,
-                  defaultValue: Int ->
-                    savedInstanceState.getInt(key, defaultValue)
-                },
-                { key: String,
-                  defaultValue: Double ->
-                    savedInstanceState.getDouble(key, defaultValue)
-                }
-            )
+            manualExerciseEntryForm.restoreSavedInstanceState({ key: String, defaultValue: String ->
+                savedInstanceState.getString(key, defaultValue)
+            }, { key: String, defaultValue: Int ->
+                savedInstanceState.getInt(key, defaultValue)
+            }, { key: String, defaultValue: Double ->
+                savedInstanceState.getDouble(key, defaultValue)
+            })
         println(restoredData)
         manualExerciseEntryForm = restoredData
     }
@@ -197,7 +193,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
         placeHolder: String?,
         positiveButtonText: String,
         negativeButtonText: String,
-        positiveButtonCallback: (DialogInterface, Int) -> Unit,
+        positiveButtonCallback: (DialogInterface, Int, String) -> Unit,
         negativeButtonCallback: (DialogInterface, Int) -> Unit
     ) {
         val alertDialogFragment = AlertDialogFragment(
@@ -219,7 +215,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
             null,
             POSITIVE_BUTTON_TEXT,
             NEGATIVE_BUTTON_TEXT,
-            { _, _ -> println("OK") },
+            { _, _, input -> manualExerciseEntryForm.duration = input.toDouble() },
             { _, _ -> println("CANCEL") })
     }
 
@@ -229,7 +225,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
             null,
             POSITIVE_BUTTON_TEXT,
             NEGATIVE_BUTTON_TEXT,
-            { _, _ -> println("OK") },
+            { _, _, input -> manualExerciseEntryForm.distance = input.toDouble() },
             { _, _ -> println("CANCEL") })
     }
 
@@ -239,7 +235,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
             null,
             POSITIVE_BUTTON_TEXT,
             NEGATIVE_BUTTON_TEXT,
-            { _, _ -> println("OK") },
+            { _, _, input -> manualExerciseEntryForm.calories = input.toDouble() },
             { _, _ -> println("CANCEL") })
     }
 
@@ -249,7 +245,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
             null,
             POSITIVE_BUTTON_TEXT,
             NEGATIVE_BUTTON_TEXT,
-            { _, _ -> println("OK") },
+            { _, _, input -> manualExerciseEntryForm.heartRate = input.toDouble() },
             { _, _ -> println("CANCEL") })
     }
 
@@ -260,7 +256,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
             hint,
             POSITIVE_BUTTON_TEXT,
             NEGATIVE_BUTTON_TEXT,
-            { _, _ -> println("OK") },
+            { _, _, input -> manualExerciseEntryForm.comment = input },
             { _, _ -> println("CANCEL") })
     }
 
