@@ -1,7 +1,6 @@
 package com.example.deniz_evrendilek_database.ui.adapters
 
 import android.content.Context
-import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,14 +9,14 @@ import android.widget.TextView
 import com.example.deniz_evrendilek_database.R
 import com.example.deniz_evrendilek_database.constants.ExerciseTypes
 import com.example.deniz_evrendilek_database.constants.InputTypes
-import com.example.deniz_evrendilek_database.constants.PreferenceConstants
 import com.example.deniz_evrendilek_database.data.model.ExerciseEntry
-import java.util.Locale
+import com.example.deniz_evrendilek_database.data.model.ManualExerciseEntryForm
 
-private const val DATE_TIME_FORMAT = "HH:mm:ss MMM dd yyyy"
 
 class ListViewAdapter(
-    private val context: Context, private var exerciseEntryList: Array<ExerciseEntry>
+    private val context: Context,
+    private var exerciseEntryList: Array<ExerciseEntry>,
+    private val onHistoryItemClick: (ExerciseEntry) -> Unit,
 ) : ArrayAdapter<ExerciseEntry>(context, R.layout.history_item, exerciseEntryList) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view =
@@ -25,16 +24,22 @@ class ListViewAdapter(
                 .inflate(R.layout.history_item, parent, false)
 
         val item = exerciseEntryList[position]
+
         val inputType = InputTypes.getString(item.inputType)
         val exerciseType = ExerciseTypes.getString(item.activityType)
-        val sdf = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
-        val dateTime = sdf.format(item.dateTime)
-        val distance = PreferenceConstants.metricValue(context, item.distance)
+        val dateTime = ManualExerciseEntryForm.getDateTimeStr(item)
+        val duration = ManualExerciseEntryForm.getDurationStr(item)
+        val distance = ManualExerciseEntryForm.getDistanceStr(context, item)
+
         val title = "$inputType: $exerciseType, $dateTime"
-        val text = "$distance ${item.duration}"
+        val text = "$distance $duration"
 
         view.findViewById<TextView>(R.id.history_item_title).text = title
         view.findViewById<TextView>(R.id.history_item_text).text = text
+
+        view.setOnClickListener { _ ->
+            onHistoryItemClick(item)
+        }
         return view
     }
 }

@@ -17,7 +17,6 @@ object InputTypes {
         _typesWithIntIds = temp
     }
 
-    fun getAll() = _types
     fun getString(index: Int) = _types[index]
     fun getId(type: String) = _typesWithIntIds[type]
 }

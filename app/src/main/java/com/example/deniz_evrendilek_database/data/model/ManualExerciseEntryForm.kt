@@ -1,7 +1,11 @@
 package com.example.deniz_evrendilek_database.data.model
 
+import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
+import com.example.deniz_evrendilek_database.constants.PreferenceConstants
 import com.example.deniz_evrendilek_database.utils.DateTimeUtils
+import java.util.Locale
 
 class ManualExerciseEntryForm(
     var day: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
@@ -81,5 +85,29 @@ class ManualExerciseEntryForm(
             calendar.set(Calendar.HOUR, hour)
         }
         return calendar
+    }
+
+    companion object {
+        private const val DATE_TIME_FORMAT = "HH:mm:ss MMM dd yyyy"
+        fun getDateTimeStr(exerciseEntry: ExerciseEntry): String {
+            val sdf = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
+            return sdf.format(exerciseEntry.dateTime)
+        }
+
+        fun getDurationStr(exerciseEntry: ExerciseEntry): String {
+            return "${exerciseEntry.duration} secs"
+        }
+
+        fun getDistanceStr(context: Context, exerciseEntry: ExerciseEntry): String {
+            return PreferenceConstants.metricValue(context, exerciseEntry.distance)
+        }
+
+        fun getCaloriesStr(exerciseEntry: ExerciseEntry): String {
+            return "${exerciseEntry.calorie} cals"
+        }
+
+        fun getHeartRateStr(exerciseEntry: ExerciseEntry): String {
+            return "${exerciseEntry.heartRate} bpm"
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.deniz_evrendilek_database.ui.fragments
+package com.example.deniz_evrendilek_database.ui.fragments.navigations
 
 import android.os.Bundle
 import android.view.LayoutInflater

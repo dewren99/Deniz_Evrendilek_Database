@@ -7,15 +7,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.deniz_evrendilek_database.R
 import com.example.deniz_evrendilek_database.constants.ExerciseTypes
 import com.example.deniz_evrendilek_database.constants.InputTypes
-import com.example.deniz_evrendilek_database.data.database.MainDatabase
-import com.example.deniz_evrendilek_database.data.repository.ExerciseEntryRepository
 import com.example.deniz_evrendilek_database.ui.viewmodel.StartFragmentViewModel
 import com.example.deniz_evrendilek_database.utils.DateTimeUtils
 
-// TODO: Handle Metric Preference
 class MainActivity : AppCompatActivity() {
-    private lateinit var database: MainDatabase
-    private lateinit var repository: ExerciseEntryRepository
     private lateinit var startFragmentViewModel: StartFragmentViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
