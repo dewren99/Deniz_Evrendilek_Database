@@ -1,32 +1,34 @@
-package com.example.deniz_evrendilek_database.data
+package com.example.deniz_evrendilek_database.data.model
 
 import android.icu.util.Calendar
 import com.example.deniz_evrendilek_database.utils.DateTimeUtils
 
-class ExerciseDataState(
+class ManualExerciseEntryForm(
     var day: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
     var month: Int = Calendar.getInstance().get(Calendar.MONTH),
     var year: Int = Calendar.getInstance().get(Calendar.YEAR),
     var hour: Int = Calendar.getInstance().get(Calendar.HOUR),
     var minute: Int = Calendar.getInstance().get(Calendar.MINUTE),
-    var duration: Int = 0,
-    var distance: Int = 0,
-    var calories: Int = 0,
-    var heartRate: Int = 0,
+    var duration: Double = 0.0,
+    var distance: Double = 0.0,
+    var calories: Double = 0.0,
+    var heartRate: Double = 0.0,
     var comment: String = ""
 ) {
     fun saveInstanceState(
-        putString: (String, String?) -> Unit, putInt: (String, Int) -> Unit
+        putString: (String, String?) -> Unit,
+        putInt: (String, Int) -> Unit,
+        putDouble: (String, Double) -> Unit
     ) {
         putInt(this.javaClass.name + "day", day)
         putInt(this.javaClass.name + "month", month)
         putInt(this.javaClass.name + "year", year)
         putInt(this.javaClass.name + "hour", hour)
         putInt(this.javaClass.name + "minute", minute)
-        putInt(this.javaClass.name + "duration", duration)
-        putInt(this.javaClass.name + "distance", distance)
-        putInt(this.javaClass.name + "calories", calories)
-        putInt(this.javaClass.name + "heartRate", heartRate)
+        putDouble(this.javaClass.name + "duration", duration)
+        putDouble(this.javaClass.name + "distance", distance)
+        putDouble(this.javaClass.name + "calories", calories)
+        putDouble(this.javaClass.name + "heartRate", heartRate)
         putString(this.javaClass.name + "comment", comment)
     }
 
@@ -43,18 +45,20 @@ class ExerciseDataState(
     }
 
     fun restoreSavedInstanceState(
-        getString: (String, String) -> String, getInt: (String, Int) -> Int
-    ): ExerciseDataState {
-        return ExerciseDataState(
+        getString: (String, String) -> String,
+        getInt: (String, Int) -> Int,
+        getDouble: (String, Double) -> Double,
+    ): ManualExerciseEntryForm {
+        return ManualExerciseEntryForm(
             getInt(this.javaClass.name + "day", day),
             getInt(this.javaClass.name + "month", month),
             getInt(this.javaClass.name + "year", year),
             getInt(this.javaClass.name + "hour", hour),
             getInt(this.javaClass.name + "minute", minute),
-            getInt(this.javaClass.name + "duration", duration),
-            getInt(this.javaClass.name + "distance", distance),
-            getInt(this.javaClass.name + "calories", calories),
-            getInt(this.javaClass.name + "heartRate", heartRate),
+            getDouble(this.javaClass.name + "duration", duration),
+            getDouble(this.javaClass.name + "distance", distance),
+            getDouble(this.javaClass.name + "calories", calories),
+            getDouble(this.javaClass.name + "heartRate", heartRate),
             getString(this.javaClass.name + "comment", comment)
         )
     }

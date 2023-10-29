@@ -34,16 +34,4 @@ data class ExerciseEntry(
     val comment: String,               // Comments
     @ColumnInfo(name = "exercise_location_list")
     val locationList: ArrayList<LatLng>// Location list
-
-
-//    var day: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
-//    var month: Int = Calendar.getInstance().get(Calendar.MONTH),
-//    var year: Int = Calendar.getInstance().get(Calendar.YEAR),
-//    var hour: Int = Calendar.getInstance().get(Calendar.HOUR),
-//    var minute: Int = Calendar.getInstance().get(Calendar.MINUTE),
-//    private var duration: Int = 0,
-//    private var distance: Int = 0,
-//    private var calories: Int = 0,
-//    private var heartRate: Int = 0,
-//    private var comment: String = ""
 )

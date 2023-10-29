@@ -16,7 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.deniz_evrendilek_database.R
 import com.example.deniz_evrendilek_database.constants.ExerciseTypes
 import com.example.deniz_evrendilek_database.constants.InputTypes
-import com.example.deniz_evrendilek_database.data.ExerciseDataState
+import com.example.deniz_evrendilek_database.data.model.ManualExerciseEntryForm
 import com.example.deniz_evrendilek_database.data.model.ExerciseEntry
 import com.example.deniz_evrendilek_database.ui.fragments.dialogs.AlertDialogFragment
 import com.example.deniz_evrendilek_database.ui.fragments.dialogs.DateListener
@@ -43,7 +43,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
     private lateinit var exerciseEntryViewModelFactory: ExerciseEntryViewModelFactory
     private lateinit var exerciseEntryViewModel: ExerciseEntryViewModel
 
-    private var exerciseDataState = ExerciseDataState()
+    private var manualExerciseEntryForm = ManualExerciseEntryForm()
 
     private var exerciseType: String? = null
     private var inputType: String? = null
@@ -79,11 +79,11 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
         println("onSaveInstanceState")
         super.onSaveInstanceState(outState)
 
-        exerciseDataState.saveInstanceState({ key: String, value: String? ->
-            outState.putString(key, value)
-        }, { key: String, value: Int ->
-            outState.putInt(key, value)
-        })
+        manualExerciseEntryForm.saveInstanceState(
+            { key: String, value: String? -> outState.putString(key, value) },
+            { key: String, value: Int -> outState.putInt(key, value) },
+            { key: String, value: Double -> outState.putDouble(key, value) }
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -94,13 +94,21 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
         }
 
         val restoredData =
-            exerciseDataState.restoreSavedInstanceState({ key: String, defaultValue: String ->
-                savedInstanceState.getString(key, defaultValue)
-            }) { key: String, defaultValue: Int ->
-                savedInstanceState.getInt(key, defaultValue)
-            }
+            manualExerciseEntryForm.restoreSavedInstanceState(
+                { key: String, defaultValue: String ->
+                    savedInstanceState.getString(key, defaultValue)
+                },
+                { key: String,
+                  defaultValue: Int ->
+                    savedInstanceState.getInt(key, defaultValue)
+                },
+                { key: String,
+                  defaultValue: Double ->
+                    savedInstanceState.getDouble(key, defaultValue)
+                }
+            )
         println(restoredData)
-        exerciseDataState = restoredData
+        manualExerciseEntryForm = restoredData
     }
 
     private fun onSave() {
@@ -115,15 +123,15 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
         val entry = ExerciseEntry(
             inputType = inputTypeId,
             activityType = exerciseTypeId,
-            dateTime = exerciseDataState.getCalendar(),
-            duration = exerciseDataState.duration.toDouble(), // TODO: change these to Double
-            distance = exerciseDataState.distance.toDouble(),
+            dateTime = manualExerciseEntryForm.getCalendar(),
+            duration = manualExerciseEntryForm.duration,
+            distance = manualExerciseEntryForm.distance,
             avgPace = 0.0, // TODO
             avgSpeed = 0.0, // TODO
-            calorie = exerciseDataState.calories.toDouble(),
+            calorie = manualExerciseEntryForm.calories,
             climb = 0.0, // TODO
-            heartRate = exerciseDataState.heartRate.toDouble(),
-            comment = exerciseDataState.comment,
+            heartRate = manualExerciseEntryForm.heartRate,
+            comment = manualExerciseEntryForm.comment,
             locationList = arrayListOf(), // TODO
         )
         exerciseEntryViewModel.insert(entry)
@@ -167,7 +175,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
     }
 
     private fun createAndShowDatePicker() {
-        val (day, month, year) = exerciseDataState
+        val (day, month, year) = manualExerciseEntryForm
         val datePickerDialog = DatePickerDialogFragment(
             year, month, day
         )
@@ -177,7 +185,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
 
     private fun createAndShowTimePicker() {
         val timePickerDialogFragment =
-            TimePickerDialogFragment(exerciseDataState.hour, exerciseDataState.minute)
+            TimePickerDialogFragment(manualExerciseEntryForm.hour, manualExerciseEntryForm.minute)
         @Suppress("DEPRECATION") timePickerDialogFragment.setTargetFragment(this, 0)
         timePickerDialogFragment.show(parentFragmentManager, "timePicker")
     }
@@ -257,14 +265,14 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
     }
 
     override fun onDateSelected(year: Int, month: Int, dayOfMonth: Int) {
-        exerciseDataState.year = year
-        exerciseDataState.month = month
-        exerciseDataState.day = dayOfMonth
+        manualExerciseEntryForm.year = year
+        manualExerciseEntryForm.month = month
+        manualExerciseEntryForm.day = dayOfMonth
     }
 
     override fun onTimeSelected(hourOfDay: Int, minute: Int) {
-        exerciseDataState.hour = hourOfDay
-        exerciseDataState.minute = minute
+        manualExerciseEntryForm.hour = hourOfDay
+        manualExerciseEntryForm.minute = minute
         println("$hourOfDay:$minute")
     }
 

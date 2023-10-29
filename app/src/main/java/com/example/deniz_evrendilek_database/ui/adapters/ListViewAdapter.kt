@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.example.deniz_evrendilek_database.R
 import com.example.deniz_evrendilek_database.constants.ExerciseTypes
 import com.example.deniz_evrendilek_database.constants.InputTypes
+import com.example.deniz_evrendilek_database.constants.PreferenceConstants
 import com.example.deniz_evrendilek_database.data.model.ExerciseEntry
 import java.util.Locale
 
@@ -28,20 +29,12 @@ class ListViewAdapter(
         val exerciseType = ExerciseTypes.getString(item.activityType)
         val sdf = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
         val dateTime = sdf.format(item.dateTime)
+        val distance = PreferenceConstants.metricValue(context, item.distance)
+        val title = "$inputType: $exerciseType, $dateTime"
+        val text = "$distance ${item.duration}"
 
-        view.findViewById<TextView>(R.id.history_item_input_type).text = inputType
-        view.findViewById<TextView>(R.id.history_item_exercise_type).text = exerciseType
-        view.findViewById<TextView>(R.id.history_item_date_time).text = dateTime
-        view.findViewById<TextView>(R.id.history_item_duration).text = item.duration.toString()
-        view.findViewById<TextView>(R.id.history_item_distance).text = item.distance.toString()
-//        view.findViewById<TextView>(R.id.history_item_avg_pace).text = item.avgPace.toString()
-//        view.findViewById<TextView>(R.id.history_item_avg_speed).text = item.avgSpeed.toString()
-        view.findViewById<TextView>(R.id.history_item_calorie).text = item.calorie.toString()
-//        view.findViewById<TextView>(R.id.history_item_climb).text = item.climb.toString()
-        view.findViewById<TextView>(R.id.history_item_heart_rate).text = item.heartRate.toString()
-//        view.findViewById<TextView>(R.id.history_item_comment).text = item.comment
-//        view.findViewById<TextView>(R.id.history_item_location).text = item.locationList.toString()
-        println("getView position: $position")
+        view.findViewById<TextView>(R.id.history_item_title).text = title
+        view.findViewById<TextView>(R.id.history_item_text).text = text
         return view
     }
 }

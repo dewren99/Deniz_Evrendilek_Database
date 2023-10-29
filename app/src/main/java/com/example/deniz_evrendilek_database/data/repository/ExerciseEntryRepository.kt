@@ -34,5 +34,4 @@ class ExerciseEntryRepository(
             exerciseEntryDao.deleteAll()
         }
     }
-
 }
