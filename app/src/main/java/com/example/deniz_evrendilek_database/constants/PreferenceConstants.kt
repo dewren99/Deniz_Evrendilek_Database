@@ -19,7 +19,7 @@ object PreferenceConstants {
             pm.getString(UNIT_PREFERENCE_KEY, UNIT_PREFERENCE_DEFAULT) ?: UNIT_PREFERENCE_DEFAULT
 
         val convertedValue = if (unit == UNIT_PREFERENCE_METRIC) milesToKm(value) else value
-        var prefix = if (unit == UNIT_PREFERENCE_METRIC) "Kilometers" else "Miles"
+        val prefix = if (unit == UNIT_PREFERENCE_METRIC) "Kilometers" else "Miles"
 
         return "$convertedValue $prefix"
     }

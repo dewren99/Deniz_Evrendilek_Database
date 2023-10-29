@@ -9,7 +9,6 @@ class StartFragmentViewModel : ViewModel() {
     private val _inputType = MutableLiveData<String>()
     private val _activityType = MutableLiveData<String>()
     val inputType: MutableLiveData<String> get() = _inputType
-    val activityType: MutableLiveData<String> get() = _activityType
 
     val inputAndActivityType = MediatorLiveData<Pair<String?, String?>>().apply {
         addSource(_inputType) { value = it to _activityType.value }

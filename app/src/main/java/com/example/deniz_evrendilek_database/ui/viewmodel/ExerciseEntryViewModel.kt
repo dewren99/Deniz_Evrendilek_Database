@@ -5,11 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import com.example.deniz_evrendilek_database.data.database.MainDatabase
 import com.example.deniz_evrendilek_database.data.model.ExerciseEntry
 import com.example.deniz_evrendilek_database.data.repository.ExerciseEntryRepository
-import kotlinx.coroutines.launch
 
 class ExerciseEntryViewModel(
     context: Context
@@ -34,22 +32,12 @@ class ExerciseEntryViewModel(
         _exerciseEntryRepository.insert(exerciseEntry)
     }
 
+    fun delete(exerciseEntry: ExerciseEntry) {
+        _exerciseEntryRepository.delete(exerciseEntry)
+    }
+
     fun display(exerciseEntry: ExerciseEntry) {
         _exerciseEntryDisplay = MutableLiveData(exerciseEntry)
-    }
-
-    fun clearDisplay() {
-        _exerciseEntryDisplay = null
-    }
-
-    fun deleteAll() {
-        val liveData = _allExerciseEntries.value
-        if (liveData.isNullOrEmpty()) {
-            return
-        }
-        viewModelScope.launch {
-            _exerciseEntryRepository.deleteAll()
-        }
     }
 
 }
