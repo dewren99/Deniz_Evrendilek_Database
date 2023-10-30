@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.deniz_evrendilek_database.R
+import com.example.deniz_evrendilek_database.constants.PreferenceConstants.UNIT_PREFERENCE_DEFAULT
 import com.example.deniz_evrendilek_database.data.model.ExerciseEntry
 import com.example.deniz_evrendilek_database.ui.adapters.ListViewAdapter
 import com.example.deniz_evrendilek_database.ui.viewmodel.ExerciseEntryViewModel
@@ -26,7 +27,10 @@ class HistoryFragment : Fragment() {
     ): View {
         view = inflater.inflate(R.layout.fragment_history, container, false)
         listView = view.findViewById(R.id.history_list_view)
-        listViewAdapter = ListViewAdapter(requireContext(), emptyArray(), ::handleHistoryItemClick)
+        listViewAdapter = ListViewAdapter(
+            requireContext(), emptyArray(), UNIT_PREFERENCE_DEFAULT,
+            ::handleHistoryItemClick
+        )
         listView.adapter = listViewAdapter
 
         exerciseEntryViewModelFactory = ExerciseEntryViewModelFactory(requireActivity())
@@ -34,11 +38,17 @@ class HistoryFragment : Fragment() {
             requireActivity(), exerciseEntryViewModelFactory
         )[ExerciseEntryViewModel::class.java]
 
-        exerciseEntryViewModel.allExerciseEntries.observe(viewLifecycleOwner) {
-            println("History has ${it.size} entries")
-            it.forEach { item -> println(item) }
+        exerciseEntryViewModel.allExerciseEntries.observe(viewLifecycleOwner) { (items, unit) ->
+            if (items == null || unit == null) {
+                return@observe
+            }
+            println("History has ${items.size} entries")
+            items.forEach { item -> println(item) }
             listViewAdapter =
-                ListViewAdapter(requireContext(), it.toTypedArray(), ::handleHistoryItemClick)
+                ListViewAdapter(
+                    requireContext(), items.toTypedArray(), unit,
+                    ::handleHistoryItemClick
+                )
             listView.adapter = listViewAdapter
         }
         return view

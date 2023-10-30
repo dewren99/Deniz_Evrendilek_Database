@@ -1,6 +1,7 @@
+@file:Suppress("unused")
+
 package com.example.deniz_evrendilek_database.data.model
 
-import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import com.example.deniz_evrendilek_database.constants.PreferenceConstants
@@ -98,8 +99,8 @@ class ManualExerciseEntryForm(
             return "${exerciseEntry.duration} secs"
         }
 
-        fun getDistanceStr(context: Context, exerciseEntry: ExerciseEntry): String {
-            return PreferenceConstants.metricValue(context, exerciseEntry.distance)
+        fun getDistanceStr(unit: String, exerciseEntry: ExerciseEntry): String {
+            return PreferenceConstants.metricValue(unit, exerciseEntry.distance)
         }
 
         fun getCaloriesStr(exerciseEntry: ExerciseEntry): String {

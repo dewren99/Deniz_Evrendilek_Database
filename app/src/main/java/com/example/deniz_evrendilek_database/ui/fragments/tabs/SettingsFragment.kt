@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.CheckBoxPreference
 import androidx.preference.EditTextPreference
@@ -12,9 +13,12 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.example.deniz_evrendilek_database.R
+import com.example.deniz_evrendilek_database.constants.PreferenceConstants.UNIT_PREFERENCE_DEFAULT
 import com.example.deniz_evrendilek_database.constants.PreferenceConstants.UNIT_PREFERENCE_IMPERIAL
 import com.example.deniz_evrendilek_database.constants.PreferenceConstants.UNIT_PREFERENCE_KEY
 import com.example.deniz_evrendilek_database.constants.PreferenceConstants.UNIT_PREFERENCE_METRIC
+import com.example.deniz_evrendilek_database.ui.viewmodel.ExerciseEntryViewModel
+import com.example.deniz_evrendilek_database.ui.viewmodel.ExerciseEntryViewModelFactory
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var profilePreference: Preference
@@ -24,12 +28,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var webpagePreference: Preference
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var unitPreferences: Array<String>
+    private lateinit var exerciseEntryViewModelFactory: ExerciseEntryViewModelFactory
+    private lateinit var exerciseEntryViewModel: ExerciseEntryViewModel
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         unitPreferences = resources.getStringArray(R.array.unit_preference)
+        exerciseEntryViewModelFactory = ExerciseEntryViewModelFactory(requireActivity())
+        exerciseEntryViewModel = ViewModelProvider(
+            requireActivity(), exerciseEntryViewModelFactory
+        )[ExerciseEntryViewModel::class.java]
+
         setupAccountPreferences()
         setupAdditionalSettings()
         setupMisc()
@@ -72,13 +83,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
         unitPreference.setOnPreferenceChangeListener { _, newValue ->
             println("unitPreference: $newValue")
             val editor = sharedPreferences.edit()
+            var unit = UNIT_PREFERENCE_DEFAULT
             when (newValue) {
-                unitPreferences[0] -> editor.putString(UNIT_PREFERENCE_KEY, UNIT_PREFERENCE_METRIC)
-                unitPreferences[1] -> editor.putString(
-                    UNIT_PREFERENCE_KEY,
-                    UNIT_PREFERENCE_IMPERIAL
-                )
+                unitPreferences[0] -> unit = UNIT_PREFERENCE_METRIC
+                unitPreferences[1] -> unit = UNIT_PREFERENCE_IMPERIAL
             }
+            editor.putString(UNIT_PREFERENCE_KEY, unit)
+            exerciseEntryViewModel.setUnitPreference(unit)
             editor.apply()
             true
         }

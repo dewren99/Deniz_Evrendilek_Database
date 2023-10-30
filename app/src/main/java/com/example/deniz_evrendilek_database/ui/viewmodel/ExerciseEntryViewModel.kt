@@ -2,9 +2,11 @@ package com.example.deniz_evrendilek_database.ui.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import com.example.deniz_evrendilek_database.constants.PreferenceConstants
 import com.example.deniz_evrendilek_database.data.database.MainDatabase
 import com.example.deniz_evrendilek_database.data.model.ExerciseEntry
 import com.example.deniz_evrendilek_database.data.repository.ExerciseEntryRepository
@@ -14,7 +16,8 @@ class ExerciseEntryViewModel(
 ) : ViewModel() {
     private val _exerciseEntryRepository: ExerciseEntryRepository
     private val _allExerciseEntries: LiveData<List<ExerciseEntry>>
-    private var _exerciseEntryDisplay: MutableLiveData<ExerciseEntry>?
+    private var _exerciseEntryDisplay: MutableLiveData<ExerciseEntry>
+    private val _unitPreference: MutableLiveData<String>
 
     init {
         val db = MainDatabase.getInstance(context)
@@ -22,10 +25,20 @@ class ExerciseEntryViewModel(
         _exerciseEntryRepository = ExerciseEntryRepository(dao)
         _allExerciseEntries = _exerciseEntryRepository.getAll().asLiveData()
         _exerciseEntryDisplay = MutableLiveData()
+        _unitPreference = MutableLiveData(PreferenceConstants.getUnit(context))
     }
 
-    val allExerciseEntries get() = _allExerciseEntries
-    val exerciseEntryDisplay get() = _exerciseEntryDisplay
+    val allExerciseEntries
+        get() = MediatorLiveData<Pair<List<ExerciseEntry>?, String?>>().apply {
+            addSource(_allExerciseEntries) { value = it to _unitPreference.value }
+            addSource(_unitPreference) { value = _allExerciseEntries.value to it }
+        }
+
+    val exerciseEntryDisplay
+        get() = MediatorLiveData<Pair<ExerciseEntry?, String?>>().apply {
+            addSource(_exerciseEntryDisplay) { value = it to _unitPreference.value }
+            addSource(_unitPreference) { value = _exerciseEntryDisplay.value to it }
+        }
 
 
     fun insert(exerciseEntry: ExerciseEntry) {
@@ -40,4 +53,7 @@ class ExerciseEntryViewModel(
         _exerciseEntryDisplay = MutableLiveData(exerciseEntry)
     }
 
+    fun setUnitPreference(unit: String) {
+        _unitPreference.value = unit
+    }
 }

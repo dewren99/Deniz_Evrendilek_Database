@@ -42,8 +42,13 @@ class DisplayEntryFragment : Fragment() {
             requireActivity(), exerciseEntryViewModelFactory
         )[ExerciseEntryViewModel::class.java]
 
-        exerciseEntryViewModel.exerciseEntryDisplay?.observe(viewLifecycleOwner) { exerciseEntry ->
-            fillTextViews(exerciseEntry)
+        exerciseEntryViewModel.exerciseEntryDisplay.observe(viewLifecycleOwner) { (exerciseEntry,
+                                                                                      unit
+                                                                                  ) ->
+            if (exerciseEntry == null || unit == null) {
+                return@observe
+            }
+            fillTextViews(exerciseEntry, unit)
             initDeleteButtonListener(exerciseEntry)
         }
 
@@ -85,12 +90,12 @@ class DisplayEntryFragment : Fragment() {
         toolbar.removeView(deleteButton)
     }
 
-    private fun fillTextViews(it: ExerciseEntry) {
+    private fun fillTextViews(it: ExerciseEntry, unit: String) {
         val inputType = InputTypes.getString(it.inputType)
         val exerciseType = ExerciseTypes.getString(it.activityType)
         val dateTime = ManualExerciseEntryForm.getDateTimeStr(it)
         val duration = ManualExerciseEntryForm.getDurationStr(it)
-        val distance = ManualExerciseEntryForm.getDistanceStr(requireContext(), it)
+        val distance = ManualExerciseEntryForm.getDistanceStr(unit, it)
         val calories = ManualExerciseEntryForm.getCaloriesStr(it)
         val heartRate = ManualExerciseEntryForm.getHeartRateStr(it)
         view.findViewById<TextView>(R.id.display_exercise_entry_input_type).text = inputType
