@@ -25,11 +25,6 @@ class StartFragment : Fragment() {
     private lateinit var view: View
 
 
-    @Suppress("RedundantOverride")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -51,7 +46,6 @@ class StartFragment : Fragment() {
             if (inputType == null) {
                 throw NoSuchFieldException("Input Type cannot be empty")
             }
-            println("inputType: $inputType")
             buttonStart.setOnClickListener {
                 when (inputType) {
                     inputTypes[0] -> navigateToEntryCreation()
@@ -105,7 +99,6 @@ class StartFragment : Fragment() {
                     throw IllegalAccessError("No parent found")
                 }
                 val selected = parent.getItemAtPosition(position).toString()
-                println("Selected Input Type: $selected")
                 startFragmentViewModel.setInputType(selected)
             }
 
@@ -115,13 +108,6 @@ class StartFragment : Fragment() {
 
         }
     }
-
-//    private fun bundleForNavigation(inputType: String, activityType: String): Bundle {
-//        val bundle = Bundle()
-//        bundle.putString(EXERCISE_ENTRY_ACTIVITY_TYPE_KEY, activityType)
-//        bundle.putString(EXERCISE_ENTRY_INPUT_TYPE_KEY, inputType)
-//        return bundle
-//    }
 
     private fun navigateToMap() {
         findNavController().navigate(R.id.action_mainFragment_to_mapFragment)

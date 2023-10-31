@@ -21,7 +21,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.deniz_evrendilek_database.R
-import com.example.deniz_evrendilek_database.data.ProfileData
+import com.example.deniz_evrendilek_database.data.model.ProfileDataForm
 import com.example.deniz_evrendilek_database.managers.PermissionsManager
 import com.example.deniz_evrendilek_database.managers.ToastManager
 import com.example.deniz_evrendilek_database.ui.fragments.dialogs.AlertDialogFragment
@@ -49,7 +49,7 @@ class ProfileFragment : Fragment(), AlertDialogOnClickListener {
     private var profilePicUri: Uri? = null
     private lateinit var view: View
 
-    private lateinit var profileData: ProfileData
+    private lateinit var profileDataForm: ProfileDataForm
     private lateinit var permissionsManager: PermissionsManager
     private lateinit var toastManager: ToastManager
 
@@ -76,7 +76,7 @@ class ProfileFragment : Fragment(), AlertDialogOnClickListener {
     ): View {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_profile, container, false)
-        profileData = ProfileData(requireContext())
+        profileDataForm = ProfileDataForm(requireContext())
         permissionsManager = PermissionsManager(this)
         toastManager = ToastManager(requireContext())
         setupProfilePage()
@@ -103,14 +103,12 @@ class ProfileFragment : Fragment(), AlertDialogOnClickListener {
 
 
     private fun setupProfilePage() {
-//        maybeRequestPermissions()
         setupViewVariables()
         loadProfile()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         if (getProfilePic() != null) {
-            println("onSaveInstanceState profilePicUri: $profilePicUri")
             outState.putString("profilePicUri", profilePicUri.toString())
         }
         super.onSaveInstanceState(outState)
@@ -124,28 +122,23 @@ class ProfileFragment : Fragment(), AlertDialogOnClickListener {
         if (maybeUri != null) {
             setProfilePic(maybeUri)
         }
-        println("onRestoreInstanceState profilePicUri: $profilePicUri")
         super.onViewStateRestored(savedInstanceState)
     }
 
     private fun loadProfile() {
-        val data = profileData.load()
+        val data = profileDataForm.load()
 
-        println(data[ProfileData.KEYS.GENDER])
-        println(data[ProfileData.KEYS.GENDER]?.toIntOrNull() ?: -1)
+        inputName.setText(data[ProfileDataForm.KEYS.NAME])
+        inputEmail.setText(data[ProfileDataForm.KEYS.EMAIL])
+        inputPhone.setText(data[ProfileDataForm.KEYS.PHONE])
+        radioGroupGender.check(data[ProfileDataForm.KEYS.GENDER]?.toIntOrNull() ?: -1)
+        inputClass.setText(data[ProfileDataForm.KEYS.CLASS])
+        inputMajor.setText(data[ProfileDataForm.KEYS.MAJOR])
 
-        inputName.setText(data[ProfileData.KEYS.NAME])
-        inputEmail.setText(data[ProfileData.KEYS.EMAIL])
-        inputPhone.setText(data[ProfileData.KEYS.PHONE])
-        radioGroupGender.check(data[ProfileData.KEYS.GENDER]?.toIntOrNull() ?: -1)
-        inputClass.setText(data[ProfileData.KEYS.CLASS])
-        inputMajor.setText(data[ProfileData.KEYS.MAJOR])
-
-        val maybeUri = data[ProfileData.KEYS.PROFILE_IMAGE_URI]?.toUri()
+        val maybeUri = data[ProfileDataForm.KEYS.PROFILE_IMAGE_URI]?.toUri()
         val emptyUri = "".toUri()
         if (maybeUri != null && maybeUri != emptyUri) {
             setProfilePic(maybeUri)
-            println("profilePicUri is valid: $profilePicUri")
         }
     }
 
@@ -154,9 +147,7 @@ class ProfileFragment : Fragment(), AlertDialogOnClickListener {
         val formValues = getFormValues()
         val currUri = getProfilePic() ?: ""
 
-        println(formValues["genderRadio"].toString())
-
-        profileData.save(
+        profileDataForm.save(
             formValues["nameInput"].toString(),
             formValues["emailInput"].toString(),
             formValues["phoneInput"].toString(),
@@ -215,10 +206,6 @@ class ProfileFragment : Fragment(), AlertDialogOnClickListener {
     }
 
     private fun getFormValues(): Map<String, Any> {
-        println(
-            "${inputName.text}, " + "${inputEmail.text}, " + "${inputPhone.text}, " + "${radioGroupGender.checkedRadioButtonId}, " + "${inputClass.text}, " + "${inputMajor.text}"
-        )
-
         return mapOf(
             "nameInput" to inputName.text,
             "emailInput" to inputEmail.text,
@@ -243,19 +230,16 @@ class ProfileFragment : Fragment(), AlertDialogOnClickListener {
     }
 
     private fun handleOnSave() {
-        println("Save Info")
         saveProfile()
         toastManager.showToast("Saved!")
         exitProfile()
     }
 
     private fun handleOnCancelSave() {
-        println("Cancel Save Info")
         exitProfile()
     }
 
     private fun handleSelectImageWithCamera() {
-        println("Select Image")
         val cameraIntent = Intent(ACTION_IMAGE_CAPTURE)
         @Suppress("DEPRECATION") startActivityForResult(
             cameraIntent, PermissionsManager.PERMISSION_IMAGE_CAPTURE
@@ -315,7 +299,6 @@ class ProfileFragment : Fragment(), AlertDialogOnClickListener {
             if (imageUri != null) {
                 setProfilePic(imageUri)
             }
-            println("Could not save the profile picture locally")
         }
 
         fun onPermissionPick() {
@@ -375,7 +358,6 @@ class ProfileFragment : Fragment(), AlertDialogOnClickListener {
     }
 
     override fun onListItemClicked(position: Int) {
-        println("onListItemClicked")
         dialogListOnClickListener(position)
     }
 

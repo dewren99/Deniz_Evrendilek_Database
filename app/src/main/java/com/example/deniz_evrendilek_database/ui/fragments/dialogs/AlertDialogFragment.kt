@@ -30,7 +30,6 @@ class AlertDialogFragment(
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        println("onCreateDialog")
         return createAlertDialog()
     }
 
@@ -73,14 +72,12 @@ class AlertDialogFragment(
         if (positiveButtonCallback != null && positiveButtonText != null) {
             builder.setPositiveButton(positiveButtonText) { dialog, i ->
                 positiveButtonCallback.invoke(dialog, i, input.text.toString())
-                println(input.text.toString())
             }
         }
 
         if (negativeButtonCallback != null && negativeButtonText != null) {
             builder.setNegativeButton(negativeButtonText) { dialog, i ->
                 negativeButtonCallback.invoke(dialog, i)
-                println(input.text.toString())
             }
         }
     }
@@ -93,7 +90,6 @@ class AlertDialogFragment(
     }
 
     private fun onListItemClicked(position: Int) {
-        println("onListItemClicked")
         (parentFragment as? AlertDialogOnClickListener)?.onListItemClicked(position)
     }
 }

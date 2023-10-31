@@ -79,8 +79,6 @@ class DisplayEntryFragment : Fragment() {
 
     private fun initDeleteButtonListener(exerciseEntry: ExerciseEntry) {
         deleteButton.setOnClickListener { _ ->
-            //TODO
-            println("DELETE")
             deleteExerciseEntry(exerciseEntry)
             findNavController().navigate(R.id.action_displayEntryFragment_to_mainFragment)
         }

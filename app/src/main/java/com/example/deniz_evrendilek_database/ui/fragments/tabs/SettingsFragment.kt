@@ -59,13 +59,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
         privacyPreference.setOnPreferenceChangeListener { _, newValue ->
-            println("privacyPreference $newValue")
             true
         }
     }
 
     private fun navigateToProfile() {
-        println("profilePreference click")
         val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(
             R.id.nav_host_fragment
         ) as NavHostFragment
@@ -81,7 +79,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         )
 
         unitPreference.setOnPreferenceChangeListener { _, newValue ->
-            println("unitPreference: $newValue")
             val editor = sharedPreferences.edit()
             var unit = UNIT_PREFERENCE_DEFAULT
             when (newValue) {
@@ -94,9 +91,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
         commentsPreference.setOnPreferenceChangeListener { _, newValue ->
-            println(
-                "Comments: $newValue"
-            )
             true
         }
 
@@ -108,7 +102,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 ?: throw NoSuchFieldError("Webpage preference not found")
 
         webpagePreference.setOnPreferenceClickListener {
-            println("Intent Webpage")
             val intentOpenWebpage = Intent(Intent.ACTION_VIEW)
             intentOpenWebpage.data = Uri.parse("https://www.sfu.ca/computing.html")
             startActivity(intentOpenWebpage)

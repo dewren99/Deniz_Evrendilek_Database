@@ -47,13 +47,13 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
 
     private var exerciseType: String? = null
     private var inputType: String? = null
+    private var exerciseListSize: Int = 0
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        println("onCreateView")
         view = inflater.inflate(R.layout.fragment_entry, container, false)
         setupListView()
 
@@ -61,13 +61,18 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
         exerciseEntryViewModel = ViewModelProvider(
             requireActivity(), exerciseEntryViewModelFactory
         )[ExerciseEntryViewModel::class.java]
+        exerciseEntryViewModel.allExerciseEntries.observe(viewLifecycleOwner) { (exerciseList, _) ->
+            if (exerciseList == null) {
+                return@observe
+            }
+            exerciseListSize = exerciseList.size
+        }
 
 
         startFragmentViewModel =
             ViewModelProvider(requireActivity())[StartFragmentViewModel::class.java]
 
         startFragmentViewModel.inputAndActivityType.observe(viewLifecycleOwner) {
-            println("Pair: $it")
             inputType = it.first
             exerciseType = it.second
         }
@@ -75,13 +80,11 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        println("onSaveInstanceState")
         super.onSaveInstanceState(outState)
 
         manualExerciseEntryForm.saveInstanceState({ key: String, value: String? ->
             outState.putString(
-                key,
-                value
+                key, value
             )
         },
             { key: String, value: Int -> outState.putInt(key, value) },
@@ -89,7 +92,6 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        println("onViewCreated")
         super.onViewCreated(view, savedInstanceState)
         if (savedInstanceState == null) {
             return
@@ -103,7 +105,6 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
             }, { key: String, defaultValue: Double ->
                 savedInstanceState.getDouble(key, defaultValue)
             })
-        println(restoredData)
         manualExerciseEntryForm = restoredData
     }
 
@@ -153,8 +154,6 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
 
         listView.setOnItemClickListener { parent, _, position, _ ->
             val selected = parent.getItemAtPosition(position) as String
-            println(selected)
-
             handleOnItemClickListener(selected)
         }
 
@@ -163,6 +162,9 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
         buttonSave.setOnClickListener {
             onSave()
             findNavController().navigate(R.id.action_entryFragment_to_mainFragment)
+            Toast.makeText(
+                requireContext(), "Entry #${exerciseListSize + 1} saved", Toast.LENGTH_SHORT
+            ).show()
         }
         buttonCancel.setOnClickListener {
             findNavController().navigate(R.id.action_entryFragment_to_mainFragment)
@@ -210,8 +212,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
     }
 
     private fun createAndShowDurationDialog() {
-        createAndShowAlertDialog(
-            ENTRY_OPTIONS[2],
+        createAndShowAlertDialog(ENTRY_OPTIONS[2],
             InputType.TYPE_CLASS_NUMBER,
             null,
             POSITIVE_BUTTON_TEXT,
@@ -221,8 +222,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
     }
 
     private fun createAndShowDistanceDialog() {
-        createAndShowAlertDialog(
-            ENTRY_OPTIONS[3],
+        createAndShowAlertDialog(ENTRY_OPTIONS[3],
             InputType.TYPE_CLASS_NUMBER,
             null,
             POSITIVE_BUTTON_TEXT,
@@ -232,8 +232,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
     }
 
     private fun createAndShowCaloriesDialog() {
-        createAndShowAlertDialog(
-            ENTRY_OPTIONS[4],
+        createAndShowAlertDialog(ENTRY_OPTIONS[4],
             InputType.TYPE_CLASS_NUMBER,
             null,
             POSITIVE_BUTTON_TEXT,
@@ -243,8 +242,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
     }
 
     private fun createAndShowHeartRateDialog() {
-        createAndShowAlertDialog(
-            ENTRY_OPTIONS[5],
+        createAndShowAlertDialog(ENTRY_OPTIONS[5],
             InputType.TYPE_CLASS_NUMBER,
             null,
             POSITIVE_BUTTON_TEXT,
@@ -255,8 +253,7 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
 
     private fun createAndShowCommentDialog() {
         val hint = "How did it go? Notes here."
-        createAndShowAlertDialog(
-            ENTRY_OPTIONS[6],
+        createAndShowAlertDialog(ENTRY_OPTIONS[6],
             InputType.TYPE_TEXT_FLAG_MULTI_LINE,
             hint,
             POSITIVE_BUTTON_TEXT,
@@ -274,7 +271,6 @@ class EntryFragment : Fragment(), DateListener, TimeListener {
     override fun onTimeSelected(hourOfDay: Int, minute: Int) {
         manualExerciseEntryForm.hour = hourOfDay
         manualExerciseEntryForm.minute = minute
-        println("$hourOfDay:$minute")
     }
 
 }

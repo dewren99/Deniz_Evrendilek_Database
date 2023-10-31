@@ -28,8 +28,7 @@ class HistoryFragment : Fragment() {
         view = inflater.inflate(R.layout.fragment_history, container, false)
         listView = view.findViewById(R.id.history_list_view)
         listViewAdapter = ListViewAdapter(
-            requireContext(), emptyArray(), UNIT_PREFERENCE_DEFAULT,
-            ::handleHistoryItemClick
+            requireContext(), emptyArray(), UNIT_PREFERENCE_DEFAULT, ::handleHistoryItemClick
         )
         listView.adapter = listViewAdapter
 
@@ -42,13 +41,9 @@ class HistoryFragment : Fragment() {
             if (items == null || unit == null) {
                 return@observe
             }
-            println("History has ${items.size} entries")
-            items.forEach { item -> println(item) }
-            listViewAdapter =
-                ListViewAdapter(
-                    requireContext(), items.toTypedArray(), unit,
-                    ::handleHistoryItemClick
-                )
+            listViewAdapter = ListViewAdapter(
+                requireContext(), items.toTypedArray(), unit, ::handleHistoryItemClick
+            )
             listView.adapter = listViewAdapter
         }
         return view

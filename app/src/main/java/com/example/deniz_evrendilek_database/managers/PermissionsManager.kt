@@ -32,11 +32,7 @@ class PermissionsManager(private val fragment: Fragment) {
         onPermissionGranted: (requestCode: Int) -> Unit,
         onPermissionDenied: (requestCode: Int) -> Unit
     ) {
-        println("onRequestPermissionsResult requestCode")
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            println(
-                "grantResults.isNotEmpty() && grantResults[0] == PackageManager" + ".PERMISSION_GRANTED)"
-            )
             onPermissionGranted(requestCode)
         } else {
             onPermissionDenied(requestCode)
@@ -50,7 +46,6 @@ class PermissionsManager(private val fragment: Fragment) {
         actionMap: Map<Int, (data: Intent?) -> Unit>,
     ) {
         if (resultCode != Activity.RESULT_OK) {
-            println("onActivityResult $resultCode != RESULT_OK")
             return
         }
 

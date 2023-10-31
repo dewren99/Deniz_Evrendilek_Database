@@ -45,7 +45,6 @@ class MainFragment : Fragment() {
         super.onViewStateRestored(savedInstanceState)
         val sp = requireActivity().getPreferences(Context.MODE_PRIVATE)
         currentTabIndex = sp.getInt("position", 0)
-        println("onViewStateRestored: $currentTabIndex")
         viewPager2.setCurrentItem(currentTabIndex, false) // viewPager2 current item setter
         // doesn't work unless smoothScroll is set to false... What a mess!
     }
@@ -57,7 +56,6 @@ class MainFragment : Fragment() {
             editor.putInt("position", position).apply()
 
             currentTabIndex = position
-            println("update current index: $currentTabIndex")
         }
     }
 
